@@ -16,7 +16,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import SampleText from './SampleText';
 import UiKit from './UiKit';
 import BottomNavigationView from './component/BottomNavigationView'
-import Swipeable from './component/Swipeable'
+// import Swipeable from './component/Swipeable'
+import SimpleStack from './SimpleStack'
 
 class MyHomeScreen extends React.Component {
 
@@ -90,7 +91,7 @@ class MyHomeScreen extends React.Component {
 
           style={styles.container} onScroll={this.handleScroll}>
 
-{/*
+          {/*
           <View style={{ flex: 1 }}>
 
             {this.state.todos.map((item, i) =>
@@ -145,9 +146,7 @@ const MyNavScreen = ({ navigation, banner }) => (
 
 
 const MyPeopleScreen = ({ navigation }) => (
-  <MyNavScreen
-    banner="People Tab"
-    navigation={navigation}
+  <SimpleStack
   />
 );
 

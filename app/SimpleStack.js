@@ -5,12 +5,13 @@
 import React from 'react';
 import {
   Button,
-  ScrollView,
+  ScrollView, View
 } from 'react-native';
 import {
   StackNavigator,
 } from 'react-navigation';
 import SampleText from './SampleText';
+import UiKit from './UiKit';
 
 const MyNavScreen = ({ navigation, banner }) => (
   <ScrollView>
@@ -31,10 +32,26 @@ const MyNavScreen = ({ navigation, banner }) => (
 );
 
 const MyHomeScreen = ({ navigation }) => (
-  <MyNavScreen
-    banner="Home Screen"
-    navigation={navigation}
-  />
+
+
+  <ScrollView>
+
+    <UiKit />
+
+    <Button
+      onPress={() => navigation.navigate('Profile', { name: 'Jane' })}
+      title="Go to a profile screen"
+    />
+    <Button
+      onPress={() => navigation.navigate('Photos', { name: 'Jane' })}
+      title="Go to a photos screen"
+    />
+    <Button
+      onPress={() => navigation.goBack(null)}
+      title="Go back"
+    />
+  </ScrollView>
+
 );
 MyHomeScreen.navigationOptions = {
   title: 'Welcome',
@@ -61,9 +78,9 @@ const MyProfileScreen = ({ navigation }) => (
 );
 
 MyProfileScreen.navigationOptions = props => {
-  const {navigation} = props;
-  const {state, setParams} = navigation;
-  const {params} = state;
+  const { navigation } = props;
+  const { state, setParams } = navigation;
+  const { params } = state;
   return {
     headerTitle: `${params.name}'s Profile!`,
     // Render a button on the right side of the header.
