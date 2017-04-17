@@ -22,6 +22,8 @@ import StacksOverTabs from './StacksOverTabs';
 import SimpleStack from './SimpleStack';
 import SimpleTabs from './SimpleTabs';
 
+import SplashScreen from './SplashScreen';
+
 const ExampleRoutes = {
   SimpleStack: {
     name: 'Stack Example',
@@ -77,27 +79,49 @@ const ExampleRoutes = {
   },
 };
 
-const MainScreen = ({ navigation }) => (
-  <ScrollView>
-    <Banner />
-    {Object.keys(ExampleRoutes).map((routeName: string) =>
-      <TouchableOpacity
-        key={routeName}
-        onPress={() => {
-          const { path, params, screen } = ExampleRoutes[routeName];
-          const { router } = screen;
-          const action = path && router.getActionForPathAndParams(path, params);
-          navigation.navigate(routeName, {}, action);
-        }}
-      >
-        <View style={styles.item}>
-          <Text style={styles.title}>{ExampleRoutes[routeName].name}</Text>
-          <Text style={styles.description}>{ExampleRoutes[routeName].description}</Text>
-        </View>
-      </TouchableOpacity>
-    )}
-  </ScrollView>
-);
+
+class MainScreen extends React.Component {
+
+  componentDidMount() {
+    SplashScreen.hide();
+
+  }
+
+  render = () => {
+
+
+    return (
+
+      <SimpleTabs />
+
+
+      /*<ScrollView>
+        <Banner />
+        {Object.keys(ExampleRoutes).map((routeName: string) =>
+          <TouchableOpacity
+            key={routeName}
+            onPress={() => {
+              const { path, params, screen } = ExampleRoutes[routeName];
+              const { router } = screen;
+              const action = path && router.getActionForPathAndParams(path, params);
+              this.props.navigation.navigate(routeName, {}, action);
+            }}
+          >
+            <View style={styles.item}>
+              <Text style={styles.title}>{ExampleRoutes[routeName].name}</Text>
+              <Text style={styles.description}>{ExampleRoutes[routeName].description}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      </ScrollView>*/
+
+    );
+
+  }
+
+}
+
+
 
 const AppNavigator = StackNavigator({
   ...ExampleRoutes,
@@ -105,15 +129,15 @@ const AppNavigator = StackNavigator({
     screen: MainScreen,
   },
 }, {
-  initialRouteName: 'Index',
-  headerMode: 'none',
+    initialRouteName: 'Index',
+    headerMode: 'none',
 
-  /*
-   * Use modal on iOS because the card mode comes from the right,
-   * which conflicts with the drawer example gesture
-   */
-  mode: Platform.OS === 'ios' ? 'modal' : 'card',
-});
+    /*
+     * Use modal on iOS because the card mode comes from the right,
+     * which conflicts with the drawer example gesture
+     */
+    mode: Platform.OS === 'ios' ? 'modal' : 'card',
+  });
 
 export default () => <AppNavigator />;
 
