@@ -90,7 +90,7 @@ class MyHomeScreen extends React.Component {
 
           style={styles.container} onScroll={this.handleScroll}>
 
-
+{/*
           <View style={{ flex: 1 }}>
 
             {this.state.todos.map((item, i) =>
@@ -109,7 +109,7 @@ class MyHomeScreen extends React.Component {
 
 
           </View>
-
+*/}
 
 
           <UiKit navigation={this.props.navigation} />
