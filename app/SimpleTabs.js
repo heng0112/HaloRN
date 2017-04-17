@@ -7,83 +7,119 @@ import {
   Button,
   Platform,
   ScrollView,
-  StyleSheet, View, Text, Image, TouchableWithoutFeedback, Animated
+  StyleSheet, View, Text, Image, TouchableWithoutFeedback, Animated, StatusBar, Alert, RefreshControl, ToastAndroid, TouchableHighlight, TouchableOpacity
 } from 'react-native';
 import {
   TabNavigator,
 } from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SampleText from './SampleText';
+import UiKit from './UiKit';
+import BottomNavigationView from './component/BottomNavigationView'
+import Swipeable from './component/Swipeable'
 
+class MyHomeScreen extends React.Component {
 
-class BottomTabView extends React.Component {
+  constructor(props) {
+    super(props);
 
-
-
-  render = () => {
-
-    const { navigationState, position, jumpToIndex } = this.props;
-
-
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', borderTopWidth: 0.5, borderTopColor: '#ccc' }}>
-        {
-          navigationState.routes.map((route, index) => {
-
-            //const focused = index === navigationState.index;
-            //const scene = { route, index, focused };
-          
-            const inputRange = [-1, ...navigationState.routes.map((x, i) => i)];
-            const outputRange = inputRange.map((inputIndex) =>
-              (inputIndex === index ? '#008800' : '#999')
-            );
-            const color = position.interpolate({
-              inputRange,
-              outputRange,
-            });
-
-            const icons = ['ios-leaf-outline', 'ios-ionic-outline', 'ios-notifications-off-outline', 'ios-paper-plane-outline'];
-            const iconsActive = ['ios-leaf', 'ios-ionic', 'ios-notifications-off', 'ios-paper-plane'];
-            const activeOpacity = position.interpolate({
-              inputRange,
-              outputRange: inputRange.map((i) => (i === index ? 1 : 0)),
-            });
-            const inactiveOpacity = position.interpolate({
-              inputRange,
-              outputRange: inputRange.map((i) => (i === index ? 0 : 1)),
-            });
-
-            //const justifyContent = this.props.showIcon ? 'flex-end' : 'center';
-            return (
-              <TouchableWithoutFeedback key={route.key} onPress={() => jumpToIndex(index)}>
-                <View style={{
-                  height: 55,
-                  flex: 1,
-                  alignItems: 'stretch',
-                  justifyContent: 'flex-end',
-                }}>
-                  <Animated.View style={[styles.icon, { opacity: activeOpacity }]}>
-                    <Icon name={iconsActive[index]} size={30} color='#008800' />
-                    <Animated.Text style={{ color }}> {route.key}</Animated.Text>
-                  </Animated.View>
-
-                  <Animated.View style={[styles.icon, { opacity: inactiveOpacity }]}>
-                    <Icon name={icons[index]} size={30} color='#999' />
-                    <Animated.Text style={{ color }}> {route.key}</Animated.Text>
-                  </Animated.View>
-                </View>
-
-
-              </TouchableWithoutFeedback>
-            );
-          })}
-
-      </View>)
-
+    this.state = {
+      isSwiping: false,
+      refreshing: false,
+      todos: [{ name: 'leecade/react-native-swiper', done: false },
+      { name: 'fixt/react-native-page-swiper', done: false },
+      { name: 'FuYaoDe/react-native-app-intro', done: false }]
+    };
 
   }
 
+  /*static navigationOptions = {
+    tabBarLabel: '首页',
+    // Note: By default the icon is only shown on iOS. Search the showIcon option below.
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+        source={require('./assets/NavLogo.png')}
+        style={{ width: 50, height: 50 }}
+      />
+    ),
+  };*/
 
+  _onRefresh = () => {
+    this.setState({ refreshing: true });
+    setTimeout(() => {
+      this.setState({ refreshing: false });
+    }, 2000);
+  }
+
+  handleScroll = (event) => {
+
+    ToastAndroid.show(event.nativeEvent.contentOffset.y + ``, 1000);
+  }
+
+  render() {
+
+
+    const leftContent = <View style={[styles.leftSwipeItem, { backgroundColor: 'lightskyblue' }]}>
+      <Text>Pull action</Text>
+    </View>;
+
+    const rightButtons = [
+      <TouchableOpacity style={[styles.rightSwipeItem, { backgroundColor: 'lightseagreen' }]}>
+        <Text>1</Text>
+      </TouchableOpacity>,
+      <TouchableOpacity style={[styles.rightSwipeItem, { backgroundColor: 'orchid' }]}>
+        <Text>2</Text>
+      </TouchableOpacity>
+    ];
+
+
+    return (
+
+      <View style={{ flex: 1, backgroundColor: '#fff' }}>
+
+        <StatusBar
+          backgroundColor="#fff"
+          barStyle="light-content"
+        />
+
+        <ScrollView refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+          />}
+
+          style={styles.container} onScroll={this.handleScroll}>
+
+
+          <View style={{ flex: 1 }}>
+
+            {this.state.todos.map((item, i) =>
+
+
+              <Swipeable key={i}
+
+                leftContent={leftContent}
+                rightButtons={rightButtons}>
+                <View style={[styles.listItem, { backgroundColor: 'salmon' }]}>
+                  <Text>{item.name}</Text>
+                </View>
+              </Swipeable>
+
+            )}
+
+
+          </View>
+
+
+
+          <UiKit navigation={this.props.navigation} />
+
+
+        </ScrollView>
+
+      </View>
+    );
+  }
 }
 
 
@@ -105,41 +141,6 @@ const MyNavScreen = ({ navigation, banner }) => (
     />
   </ScrollView>
 );
-
-
-class MyHomeScreen extends React.Component {
-  static navigationOptions = {
-    tabBarLabel: '首页',
-    // Note: By default the icon is only shown on iOS. Search the showIcon option below.
-    tabBarIcon: ({ tintColor }) => (
-      <Image
-        source={require('./assets/NavLogo.png')}
-        style={{ width: 50, height: 50 }}
-      />
-    ),
-  };
-
-  render() {
-    return (
-      <ScrollView style={styles.container}>
-
-
-        <Button
-          onPress={() => navigation.navigate('Home')}
-          title="Go to home tab"
-        />
-        <Button
-          onPress={() => navigation.navigate('Settings')}
-          title="Go to settings tab"
-        />
-        <Button
-          onPress={() => navigation.goBack(null)}
-          title="Go back"
-        />
-      </ScrollView>
-    );
-  }
-}
 
 
 
@@ -216,15 +217,14 @@ const SimpleTabs = TabNavigator({
   },
 
 }, {
-    tabBarComponent: BottomTabView,
+    tabBarComponent: BottomNavigationView,
     tabBarPosition: 'bottom',
-    tabBarOptions: {
-      showIcon: true,
 
-      activeTintColor: Platform.OS === 'ios' ? '#e91e63' : '#fff',
-      style: { backgroundColor: '#999', }
-
-    },
+    // tabBarOptions: {
+    //   showIcon: true,
+    //   activeTintColor: Platform.OS === 'ios' ? '#e91e63' : '#fff',
+    //   style: { backgroundColor: '#999', }
+    // },
   });
 
 const styles = StyleSheet.create({
@@ -243,6 +243,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  listItem: {
+    height: 75,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  leftSwipeItem: {
+    flex: 1,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    paddingRight: 20
+  },
+  rightSwipeItem: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 20
+  },
+
+
 });
 
 export default SimpleTabs;
